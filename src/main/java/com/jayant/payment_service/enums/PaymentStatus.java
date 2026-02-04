@@ -1,4 +1,4 @@
-package com.jayant.payment_service.domain;
+package com.jayant.payment_service.enums;
 
 public enum PaymentStatus {
     INITIATED,

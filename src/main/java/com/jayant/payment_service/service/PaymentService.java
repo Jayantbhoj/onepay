@@ -1,10 +1,13 @@
 package com.jayant.payment_service.service;
 
-public class PaymentService {
-    // 1. Check idempotency key
-// 2. If exists, return stored response
-// 3. Create payment
-// 4. Process payment
-// 5. Store response
+import com.jayant.payment_service.controller.dto.request.CreatePaymentRequest;
+import com.jayant.payment_service.controller.dto.response.CreatePaymentResponse;
+
+public interface PaymentService {
+
+    CreatePaymentResponse create(
+            CreatePaymentRequest request,
+            String idempotencyKey
+    );
 
 }
