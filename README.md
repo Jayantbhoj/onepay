@@ -9,7 +9,7 @@ Create payments with idempotency support
 Prevent duplicate payments on retries
 Fetch all payments or payment by ID
 
-Delete payments (single / all)
+Get and Delete payments (single / all)
 ## steps to run locally
 Clone the repo
 - mvn clean compile
