@@ -18,4 +18,9 @@ public interface PaymentService {
 
     PaymentDetailResponse getById(Long id);
 
+    void deleteById(Long id);
+
+    void deleteAll();
+
+
 }

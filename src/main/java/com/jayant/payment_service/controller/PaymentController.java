@@ -7,6 +7,7 @@ import com.jayant.payment_service.controller.dto.response.PaymentResponse;
 import com.jayant.payment_service.entity.Payment;
 import com.jayant.payment_service.service.PaymentService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,6 +39,17 @@ public class PaymentController {
         return paymentService.getById(id);
     }
 
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deletePaymentById(@PathVariable Long id) {
+        paymentService.deleteById(id);
+    }
+
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteAllPayments() {
+        paymentService.deleteAll();
+    }
 
 
 }

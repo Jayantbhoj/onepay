@@ -13,8 +13,6 @@ import com.jayant.payment_service.repository.PaymentRepository;
 import com.jayant.payment_service.service.PaymentService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -104,6 +102,20 @@ public class PaymentServiceImpl implements PaymentService {
                 payment.getAmount()
         );
     }
+
+    @Override
+    public void deleteById(Long id) {
+        if (!paymentRepository.existsById(id)) {
+            throw new IllegalArgumentException("Payment not found");
+        }
+        paymentRepository.deleteById(id);
+    }
+
+    @Override
+    public void deleteAll() {
+        paymentRepository.deleteAll();
+    }
+
 
 
 }
