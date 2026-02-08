@@ -1,4 +1,4 @@
-package com.jayant.payment_service.domain;
+package com.jayant.payment_service.entity;
 
 import jakarta.persistence.*;
 import java.time.Instant;
@@ -33,5 +33,24 @@ public class IdempotencyKey {
         this.createdAt = Instant.now();
     }
 
-    // getters & setters only
+    public String getResponseSnapshot() {
+        return responseSnapshot;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public void setPaymentId(Long paymentId) {
+        this.paymentId = paymentId;
+    }
+
+    public void setResponseSnapshot(String responseSnapshot) {
+        this.responseSnapshot = responseSnapshot;
+    }
+
+    public Long getPaymentId() {
+        return paymentId;
+    }
+
 }
