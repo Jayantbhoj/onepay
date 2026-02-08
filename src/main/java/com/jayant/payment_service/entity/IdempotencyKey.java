@@ -49,4 +49,8 @@ public class IdempotencyKey {
         this.responseSnapshot = responseSnapshot;
     }
 
+    public Long getPaymentId() {
+        return paymentId;
+    }
+
 }

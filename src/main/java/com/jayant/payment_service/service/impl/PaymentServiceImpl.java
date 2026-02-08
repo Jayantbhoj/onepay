@@ -3,6 +3,8 @@ package com.jayant.payment_service.service.impl;
 
 import com.jayant.payment_service.controller.dto.request.CreatePaymentRequest;
 import com.jayant.payment_service.controller.dto.response.CreatePaymentResponse;
+import com.jayant.payment_service.controller.dto.response.PaymentDetailResponse;
+import com.jayant.payment_service.controller.dto.response.PaymentResponse;
 import com.jayant.payment_service.entity.IdempotencyKey;
 import com.jayant.payment_service.entity.Payment;
 import com.jayant.payment_service.enums.PaymentStatus;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -38,37 +41,69 @@ public class PaymentServiceImpl implements PaymentService {
             String idempotencyKey
     ) {
 
-        // 1. Check idempotency key
         Optional<IdempotencyKey> existing =
                 idempotencyKeyRepository.findByKey(idempotencyKey);
 
         if (existing.isPresent()) {
-            throw new IllegalStateException("Duplicate idempotency key");
+            Payment payment = paymentRepository
+                    .findById(existing.get().getPaymentId())
+                    .orElseThrow();
+
+            return new CreatePaymentResponse(
+                    payment.getId(),
+                    payment.getStatus().name()
+            );
         }
 
         Payment payment = new Payment();
         payment.setAmount(request.getAmount());
         payment.setCurrency(request.getCurrency());
         payment.setStatus(PaymentStatus.INITIATED);
-
         payment = paymentRepository.save(payment);
 
-        // 3️⃣ Store idempotency key (THIS WAS MISSING)
         IdempotencyKey key = new IdempotencyKey();
         key.setKey(idempotencyKey);
         key.setPaymentId(payment.getId());
-        key.setResponseSnapshot(
-                "paymentId=" + payment.getId() +
-                        ",status=" + payment.getStatus()
-        );
-
+        key.setResponseSnapshot("created");
         idempotencyKeyRepository.save(key);
 
-        // 4️⃣ Return response
+        // simulate lifecycle
+        payment.setStatus(PaymentStatus.PROCESSING);
+        paymentRepository.saveAndFlush(payment);
+
+        payment.setStatus(PaymentStatus.SUCCESS);
+        paymentRepository.saveAndFlush(payment);
+
         return new CreatePaymentResponse(
                 payment.getId(),
                 payment.getStatus().name()
         );
     }
+
+    @Override
+    public List<PaymentResponse> getAll() {
+        return paymentRepository.findAll()
+                .stream()
+                .map(p -> new PaymentResponse(
+                        p.getId(),
+                        p.getCurrency(),
+                        p.getStatus().name()
+                ))
+                .toList();
+    }
+
+    @Override
+    public PaymentDetailResponse getById(Long id) {
+        Payment payment = paymentRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Payment not found"));
+
+        return new PaymentDetailResponse(
+                payment.getId(),
+                payment.getCurrency(),
+                payment.getStatus().name(),
+                payment.getAmount()
+        );
+    }
+
 
 }

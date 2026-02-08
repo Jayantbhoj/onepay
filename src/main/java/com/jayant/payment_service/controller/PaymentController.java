@@ -2,10 +2,14 @@ package com.jayant.payment_service.controller;
 
 import com.jayant.payment_service.controller.dto.request.CreatePaymentRequest;
 import com.jayant.payment_service.controller.dto.response.CreatePaymentResponse;
+import com.jayant.payment_service.controller.dto.response.PaymentDetailResponse;
+import com.jayant.payment_service.controller.dto.response.PaymentResponse;
 import com.jayant.payment_service.entity.Payment;
 import com.jayant.payment_service.service.PaymentService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("payments")
@@ -23,5 +27,17 @@ public class PaymentController {
     ) {
         return paymentService.create(request, idempotencyKey);
     }
+
+    @GetMapping()
+    public List<PaymentResponse> getAllPayments() {
+        return paymentService.getAll();
+    }
+
+    @GetMapping("/{id}")
+    public PaymentDetailResponse getById(@PathVariable Long id) {
+        return paymentService.getById(id);
+    }
+
+
 
 }
